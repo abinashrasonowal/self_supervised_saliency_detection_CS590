@@ -1,4 +1,3 @@
-# utils/cluster_utils.py
 from sklearn.cluster import KMeans
 import numpy as np
 

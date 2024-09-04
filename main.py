@@ -1,29 +1,40 @@
 import torch
-from models.vit import get_vit_model, extract_patch_embeddings
-from utils.data_utils import get_dataloader
-from utils.cluster_utils import cluster_patches, refine_segmentation
 from tqdm import tqdm
+from torchvision import transforms
+import numpy as np
+from PIL import Image
+import cv2
+from sklearn.cluster import KMeans
+import os
+from models.vit import get_vit_model 
+
+def preprocess_image(image_path):
+    """Preprocess the input image to match the requirements of the ViT model."""
+    # Define the transformations
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),  # Resize to 224x224
+        transforms.ToTensor(),  # Convert image to tensor
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize using ViT pretraining stats
+    ])
+    
+    # Open the image file
+    image = Image.open(image_path).convert('RGB')
+    image = transform(image).unsqueeze(0)  # Add batch dimension
+    return image
 
 def main():
-    # Load the pretrained Vision Transformer model
-    vit_model = get_vit_model()
+    model = get_vit_model()
+    # print(model)
 
-    # Load data
-    dataloader = get_dataloader('data/cub/', batch_size=1)
+    image_path = "./temp/test.jpg"
+    image_tensor = preprocess_image(image_path)
 
-    for images in tqdm(dataloader):
-        # Extract patch embeddings
-        embeddings = extract_patch_embeddings(vit_model, images)
+    with torch.no_grad():  # Disable gradient calculation
+        attn = model.get_last_selfattention(image_tensor)  # Forward pass through the model
 
-        # Flatten embeddings and apply clustering
-        batch_size, n_patches, embedding_dim = embeddings.size()
-        embeddings = embeddings.view(batch_size * n_patches, embedding_dim).cpu().numpy()
-        cluster_labels = cluster_patches(embeddings)
 
-        # Refine the segmentation
-        refined_labels = refine_segmentation(cluster_labels, (batch_size, n_patches))
-        
-        # TODO: Evaluate or save results here
-
+    print(attn.shape)
+    print(attn[0])
+    
 if __name__ == '__main__':
     main()
