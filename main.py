@@ -46,6 +46,7 @@ def main():
     image_paths = [os.path.join(data_dir, img) for img in os.listdir(data_dir) if img.endswith('.jpg')]
 
     i=0
+    print("processing images ....")
     for image_path in image_paths:
         image_org = cv2.imread(image_path)
         image_org = cv2.resize(image_org,(224,224))
@@ -81,7 +82,7 @@ def main():
         cv2.imwrite(f'./outputs/output{i}.jpg',combined)
         i=i+1
 
-    print('output saved ....')
+    print('output saved!')
 
 
 if __name__ == '__main__':
