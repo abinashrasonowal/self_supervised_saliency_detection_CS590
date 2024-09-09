@@ -19,7 +19,7 @@ The project uses the CUB-200-2011 dataset, which contains images of 200 bird spe
     pip install -r requirements.txt
     ```
 
-3. Ensure the images is downloaded and placed in the `data/images` directory within the project folder.
+3. Place the images that you want to process inside `data/images` directory within the project folder.
 
 ## Usage
 
