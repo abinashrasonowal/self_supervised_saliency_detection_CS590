@@ -41,7 +41,8 @@ def get_qkv(model,image):
 def main():
     model = get_vit_model()
     # print(model)
-    data_dir = './data/images/001.Black_footed_Albatross/'
+    data_dir = './data/images/'
+    print("using ./data/images/ as input dir")
     image_paths = [os.path.join(data_dir, img) for img in os.listdir(data_dir) if img.endswith('.jpg')]
 
     i=0
@@ -56,7 +57,7 @@ def main():
 
         bipartition = ncut(k,(14,14))
 
-        print(bipartition.shape)
+        # print(bipartition.shape)
 
         feature_map = bipartition / bipartition.max()  # Normalize to [0, 1]
         feature_map = np.uint8(255 * feature_map)  # Convert to 8-bit
